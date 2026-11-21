@@ -1,0 +1,473 @@
+{
+  "info": {
+    "_postman_id": "c1f7b8a2-94f3-4d3b-9e2e-8c31e285a9bc",
+    "name": "The Data Hub API - MongoDB Atlas & Mongoose",
+    "description": "Comprehensive Postman test suite for The Data Hub REST API, covering all happy paths, validation errors (400), not found cases (404), relationships, and mock JWT auth.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "sampleAuthorId",
+      "value": "65f000000000000000000001",
+      "type": "string"
+    },
+    {
+      "key": "samplePostId",
+      "value": "65f000000000000000000002",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Telemetry & Landing",
+      "item": [
+        {
+          "name": "GET Landing Page UI (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": ["{{baseUrl}}"],
+              "path": [""]
+            },
+            "description": "Returns modern dark HTML landing page with live database connection badge and counts."
+          },
+          "response": []
+        },
+        {
+          "name": "GET Health Status (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            },
+            "description": "Returns operational telemetry, MongoDB connection status, uptime, and post count."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Authentication (Mock JWT)",
+      "item": [
+        {
+          "name": "POST Login - Success (200)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"securepassword\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["login"]
+            },
+            "description": "Generates a realistic 3-part Base64URL encoded mock JWT token."
+          },
+          "response": []
+        },
+        {
+          "name": "POST Login - Missing Credentials (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["login"]
+            },
+            "description": "Fails with 400 Bad Request when password or username is omitted."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Authors & Users",
+      "item": [
+        {
+          "name": "GET Users - List All (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            },
+            "description": "Returns all registered users/authors from MongoDB Atlas."
+          },
+          "response": []
+        },
+        {
+          "name": "POST Users - Create Author (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Elena Rostova\",\n  \"email\": \"elena.rostova@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            },
+            "description": "Creates a new author record in the users collection."
+          },
+          "response": []
+        },
+        {
+          "name": "POST Users - Missing Name (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"noname@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            },
+            "description": "Triggers 400 Mongoose validation error when required name is missing."
+          },
+          "response": []
+        },
+        {
+          "name": "POST Users - Duplicate Email (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Duplicate User\",\n  \"email\": \"alex.rivera@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            },
+            "description": "Fails with 400 when attempting to register an existing unique email."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Blog Posts (CRUD & Aggregation)",
+      "item": [
+        {
+          "name": "GET Posts - List All Populated (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts"]
+            },
+            "description": "Retrieves all posts with populated authorId (name and email)."
+          },
+          "response": []
+        },
+        {
+          "name": "GET Posts Recent - Top 3 Populated (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/recent",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts", "recent"]
+            },
+            "description": "Returns top 3 newest posts sorted descending by createdAt."
+          },
+          "response": []
+        },
+        {
+          "name": "POST Posts - Create Post (201)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Architecting Clean REST APIs with Mongoose\",\n  \"content\": \"Comprehensive guide on schema validation, population, and indexing strategies in MongoDB.\",\n  \"authorId\": \"{{sampleAuthorId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts"]
+            },
+            "description": "Creates post document referencing existing author."
+          },
+          "response": []
+        },
+        {
+          "name": "POST Posts - Title Too Short (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"AB\",\n  \"content\": \"Valid content body\",\n  \"authorId\": \"{{sampleAuthorId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts"]
+            },
+            "description": "Fails with 400 because title is under 3 characters."
+          },
+          "response": []
+        },
+        {
+          "name": "POST Posts - Invalid AuthorId (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Valid Post Title\",\n  \"content\": \"Valid content body\",\n  \"authorId\": \"not-a-valid-id\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts"]
+            },
+            "description": "Fails with 400 Bad Request when authorId is not a valid 24-character hexadecimal ObjectId."
+          },
+          "response": []
+        },
+        {
+          "name": "GET Post By ID - Success (200)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/{{samplePostId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts", "{{samplePostId}}"]
+            },
+            "description": "Fetches single post populated with author name and email."
+          },
+          "response": []
+        },
+        {
+          "name": "GET Post By ID - Invalid ObjectId (400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/invalid-id-123",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts", "invalid-id-123"]
+            },
+            "description": "Returns 400 Bad Request for malformed ID string."
+          },
+          "response": []
+        },
+        {
+          "name": "GET Post By ID - Not Found (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/65f000000000000000000999",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts", "65f000000000000000000999"]
+            },
+            "description": "Returns 404 when valid ObjectId does not correspond to any post."
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Post By ID - Success (200)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Title for Web Dev Post\",\n  \"content\": \"Refined content detailing latest production findings.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts/{{samplePostId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts", "{{samplePostId}}"]
+            },
+            "description": "Updates post document with schema validation enabled."
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Post By ID - Invalid ObjectId (400)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Title\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts/bad-id",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts", "bad-id"]
+            },
+            "description": "Returns 400 for malformed ID on update."
+          },
+          "response": []
+        },
+        {
+          "name": "PUT Post By ID - Not Found (404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Title\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts/65f000000000000000000999",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts", "65f000000000000000000999"]
+            },
+            "description": "Returns 404 when updating non-existent post."
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE Post By ID - Success (200)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/{{samplePostId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts", "{{samplePostId}}"]
+            },
+            "description": "Deletes post document and returns deleted object."
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE Post By ID - Invalid ObjectId (400)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/not-an-object-id",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts", "not-an-object-id"]
+            },
+            "description": "Returns 400 for malformed ID on delete."
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE Post By ID - Not Found (404)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/65f000000000000000000999",
+              "host": ["{{baseUrl}}"],
+              "path": ["posts", "65f000000000000000000999"]
+            },
+            "description": "Returns 404 when deleting post that doesn't exist."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Catch-All 404",
+      "item": [
+        {
+          "name": "GET Unknown Route (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v99/unknown",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v99", "unknown"]
+            },
+            "description": "Returns standard { success: false, message: '...', data: null } response for missing endpoints."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
