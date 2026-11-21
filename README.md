@@ -2,7 +2,7 @@
 
 The Data Hub is a persistent RESTful API server built on Node.js and Express, migrating from previous in-memory array storage to cloud document storage on MongoDB Atlas via Mongoose ODM.
 
-The system features schema validation, normalized document references with population, custom colored terminal request logging, a mock JWT authentication endpoint, and a live server landing page served directly at the root endpoint (`/`).
+The system features schema validation, normalized document references with population, custom colored terminal request logging, a mock JWT authentication endpoint, and an interactive live API console served directly at the root endpoint (`/`).
 
 ---
 
@@ -38,7 +38,7 @@ The system features schema validation, normalized document references with popul
 │   ├── postRoutes.js         # Post routes (/posts, /posts/recent, /posts/:id)
 │   └── userRoutes.js         # User routes (/users)
 ├── views/
-│   └── landingPage.js        # Responsive dark landing page generator
+│   └── landingPage.js        # Interactive live API console and landing page
 ├── .env.example              # Placeholder environment configuration
 ├── .gitignore                # Ignores .env, node_modules, and logs
 ├── package.json              # Project metadata, dependencies, and run scripts
@@ -98,7 +98,7 @@ For production execution:
 npm start
 ```
 
-Once running, navigate to `http://localhost:5000/` to view the live dashboard and route explorer.
+Once running, navigate to `http://localhost:5000/` to view the interactive live dashboard and route console.
 
 ---
 
@@ -116,7 +116,7 @@ All API endpoints return a standardized JSON envelope:
 
 | Method | Endpoint | Description | Status Codes |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/` | Responsive dark landing page with live database connection badge and counts | `200` |
+| `GET` | `/` | Interactive API explorer & console with live Atlas telemetry | `200` |
 | `GET` | `/health` | Server uptime, operational status, and database telemetry | `200` |
 | `POST` | `/login` | Mock JWT authentication generating 3-part Base64URL token | `200`, `400` |
 | `GET` | `/users` | Retrieve list of all registered authors | `200` |
@@ -164,3 +164,12 @@ This project is configured for cloud deployment on [Render](https://render.com).
 Transitioning from in-memory arrays to MongoDB Atlas with Mongoose solidified how critical database lifecycle management is in production Node services. Ensuring that the application connects to MongoDB before binding the HTTP listener prevents dropped requests on cold starts.
 
 Working with Mongoose schema validation highlighted the power of enforcing constraints (like title length bounds and email sanitization) at the data layer rather than scattering checks across controllers. Using `.populate("authorId", "name email")` showed how document databases can manage relational structures cleanly without complex manual lookups, while registering parameterized routes in the correct order (`/posts/recent` prior to `/posts/:id`) reinforced how Express processes routing tables sequentially.
+
+---
+
+## Author
+
+- **Vinayak Sharma**
+- GitHub: [vinayak2922k](https://github.com/vinayak2922k)
+- LinkedIn: [Vinayak Sharma](https://www.linkedin.com/in/vinayak-sharma)
+- Email: [vinayaksharma2289@gmail.com](mailto:vinayaksharma2289@gmail.com)
