@@ -171,5 +171,5 @@ Working with Mongoose schema validation highlighted the power of enforcing const
 
 - **Vinayak Sharma**
 - GitHub: [vinayak2922k](https://github.com/vinayak2922k)
-- LinkedIn: [Vinayak Sharma](https://www.linkedin.com/in/vinayak-sharma)
+- LinkedIn: [Vinayak Sharma](https://www.linkedin.com/in/vinayak2922k)
 - Email: [vinayaksharma2289@gmail.com](mailto:vinayaksharma2289@gmail.com)
